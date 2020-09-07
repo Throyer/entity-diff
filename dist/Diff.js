@@ -97,8 +97,8 @@ var Audit = /** @class */ (function () {
             from = utils_1.copySkeleton(from);
         }
         var modified = this.findModifiedDiffs(from, to, key);
-        var add = this.findDiffsFromLeftToRight(from, to, key, DiffType.NEW);
-        var remove = this.findDiffsFromLeftToRight(to, from, key, DiffType.REMOVED);
+        var add = this.findDiffsFromLeftToRight(to, from, key, DiffType.NEW);
+        var remove = this.findDiffsFromLeftToRight(from, to, key, DiffType.REMOVED);
         return __spreadArrays(modified, add, remove);
     };
     Audit.prototype.findModifiedDiffs = function (right, left, key) {
