@@ -130,8 +130,8 @@ export class Audit {
         }
 
         const modified = this.findModifiedDiffs(from, to, key);
-        const add = this.findDiffsFromLeftToRight(from, to, key, DiffType.NEW);
-        const remove = this.findDiffsFromLeftToRight(to, from, key, DiffType.REMOVED);
+        const add = this.findDiffsFromLeftToRight(to, from, key, DiffType.NEW);
+        const remove = this.findDiffsFromLeftToRight(from, to, key, DiffType.REMOVED);
 
         return [
             ...modified,
