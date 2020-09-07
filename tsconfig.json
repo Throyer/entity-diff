@@ -7,14 +7,10 @@
       "DOM",
       "ES2017"
     ],
-    "sourceMap": true,
+    "declaration": true,
     "outDir": "./dist",
-    "rootDir": "./src",
     "strict": false,
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
-  }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "**/__tests__/*"]
 }
