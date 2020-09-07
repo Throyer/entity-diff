@@ -1,12 +1,21 @@
 {
   "name": "entity-diff",
   "version": "1.0.0",
+  "author": "Renato Henrique",
   "main": "dist/Diff.js",
   "types": "dist/Diff.d.ts",
   "license": "MIT",
+  "keywords": ["diff", "entity-diff", "object-diff"],
   "scripts": {
     "build": "tsc",
     "test": "jest --config jestconfig.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Throyer/entity-diff.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Throyer/entity-diff/issues"
   },
   "devDependencies": {
     "@types/jest": "^26.0.13",
