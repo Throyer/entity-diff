@@ -1,6 +1,6 @@
-# object-diff
+# Entity diff
 
-Object diff
+Entity diff generator.
 
 de:
 

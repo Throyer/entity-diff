@@ -1,5 +1,5 @@
 {
-  "name": "object-diff",
+  "name": "entity-diff",
   "version": "1.0.0",
   "main": "dist/Diff.js",
   "types": "dist/Diff.d.ts",
