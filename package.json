@@ -1,6 +1,6 @@
 {
   "name": "entity-diff",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "author": "Renato Henrique",
   "main": "dist/Diff.js",
   "types": "dist/Diff.d.ts",
