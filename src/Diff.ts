@@ -3,7 +3,8 @@ import { copySkeleton, isArray, isObject } from "./utils";
 export enum DiffType {
     NEW = "NOVO",
     MODIFIED = "EDITADO",
-    REMOVED = "REMOVIDO"
+    REMOVED = "REMOVIDO",
+    ARRAY = "LISTA",
 }
 
 interface AuditProps {
@@ -35,8 +36,8 @@ export class Audit {
     private options: AuditKeyOptions[];
 
     constructor({ ignore, options }: AuditProps) {
-        this.ignore = ignore;
-        this.options = options;
+        this.ignore = ignore ?? [];
+        this.options = options ?? [];
     }
 
     public diff(from: any, to: any): Diff[] {
@@ -53,7 +54,7 @@ export class Audit {
     }
 
     private deepDiffs(diffs: Diff[], de: any, para: any, key: string) {
-        
+
         if (isArray(de, para)) {
             return this.addArrayDiff(diffs, de, para, key);
         }
@@ -82,7 +83,7 @@ export class Audit {
         if (options?.customFormater && to) {
             diff.to = options.customFormater(to);
         }
-        
+
         diffs.push(diff);
 
         return diffs;
@@ -93,12 +94,12 @@ export class Audit {
         const objectDiffs = this.diff(from, to);
 
         if (objectDiffs && objectDiffs.length) {
-            const { title } = this.findKeyOptions(key);
+            const options = this.findKeyOptions(key);
             diffs.push({
-                type: this.diffTypeFinder(from, to),
-                key: title ?? key,
-                details: objectDiffs
-            })
+                key: options?.title ?? key,
+                type: this.diffTypeDiscover(from, to),
+                details: objectDiffs,
+            });
         }
 
         return diffs;
@@ -110,13 +111,15 @@ export class Audit {
 
         if (arrayDiffs && arrayDiffs.length) {
 
-            const { title } = this.findKeyOptions(key);
+            const options = this.findKeyOptions(key);
 
             diffs.push({
+                key: options?.title ?? key,
+                type: DiffType.ARRAY,
                 details: arrayDiffs,
-                key: title ?? key
             });
         }
+
         return diffs;
     }
 
@@ -126,10 +129,14 @@ export class Audit {
             from = copySkeleton(from);
         }
 
+        const modified = this.findModifiedDiffs(from, to, key);
+        const add = this.findDiffsFromLeftToRight(from, to, key, DiffType.NEW);
+        const remove = this.findDiffsFromLeftToRight(to, from, key, DiffType.REMOVED);
+
         return [
-            ...this.findModifiedDiffs(from, to, key),
-            ...this.findDiffsFromLeftToRight(from, to, key, DiffType.NEW),
-            ...this.findDiffsFromLeftToRight(to, from, key, DiffType.REMOVED)
+            ...modified,
+            ...add,
+            ...remove,
         ];
     }
 
@@ -137,12 +144,12 @@ export class Audit {
 
         const root: Diff[] = [];
 
-        return right.reduce((modified, item) => {
+        return right.reduce((modified: Diff[], item) => {
 
             const options = this.findKeyOptions(key);
 
             if (options?.arrayOptions) {
-                const leftItem = this.findItemInAnotherArray(left, item, key); 
+                const leftItem = this.findItemInAnotherArray(left, item, options.arrayOptions.key);
                 if (leftItem && item !== leftItem) {
                     const diffs = this.diff(item, leftItem);
 
@@ -168,36 +175,36 @@ export class Audit {
 
         const root: Diff[] = [];
 
-        return right.reduce((modified, item) => {
+        return right.reduce((modified: Diff[], item) => {
 
             const options = this.findKeyOptions(key);
 
             if (options?.arrayOptions) {
 
-                const notExists = this.notExistInAnotherArray(left, item, key);
+                const notExists = this.notExistInAnotherArray(left, item, options.arrayOptions.key);
 
                 let diffs: Diff[] = [];
-    
+
                 if (notExists && type === DiffType.NEW) {
                     diffs = this.diff(copySkeleton(item), item);
                 }
-    
+
                 if (notExists && type === DiffType.REMOVED) {
                     diffs = this.diff(item, copySkeleton(item));
                 }
-                    
+
                 if (diffs.length) {
-                    return [
-                        ...modified,
-                        {
-                            key: options?.title ?? key,
-                            type,
-                            details: diffs, 
-                        }
-                    ]
+
+                    const diff: Diff = {
+                        key: item[options?.arrayOptions?.name] ?? key,
+                        type,
+                        details: diffs,
+                    }
+
+                    return [...modified, diff];
                 }
             }
-            
+
             return modified;
         }, root)
     }
@@ -218,7 +225,7 @@ export class Audit {
         return (from[key] !== to[key]) && !this.ignore.includes(key);
     }
 
-    private diffTypeFinder(from: any, to: any): DiffType {
+    private diffTypeDiscover(from: any, to: any): DiffType {
 
         if ((from !== null) && (to !== null)) {
             return DiffType.MODIFIED

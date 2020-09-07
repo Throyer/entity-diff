@@ -5,28 +5,41 @@ function toJSON(objeto: any): string {
 }
 
 const de = {
-    id: 1,
-    nome: "renato",
-    idade: 25,
-    updatedAt: "2020-09-01T04:14:38.594Z",
-    jogos: [
+    "id": 1,
+    "nome": "Fulano da silva",
+    "empresa": {
+        "id": 1,
+        "nome": "Algum lugar",
+        "cnpj": "12345678910"
+    },
+    "permissoes": [
         {
-            id: 1,
-            nome: "SimCity 4"
+            "id": 1,
+            "nome": "ADMINISTRADOR"
+        },
+        {
+            "id": 2,
+            "nome": "USUARIO"
         }
     ]
 }
 
 const para = {
-    id: 1,
-    nome: "Renatinho",
-    profissao: "programador",
-    updatedAt: "2020-09-07T04:14:38.594Z",
-    jogos: [
+    "id": 1,
+    "nome": "Fulano",
+    "empresa": {
+        "id": 2,
+        "nome": "Outro lugar",
+        "cnpj": "10987654321"
+    },
+    "permissoes": [
         {
-            id: 1,
-            nome: "SimCity 2013",
-            fodase: "tem que aparecer essa porra"
+            "id": 1,
+            "nome": "SUPER_USER"
+        },
+        {
+            "id": 4,
+            "nome": "PROGRAMADOR"
         }
     ]
 }
@@ -35,19 +48,7 @@ const audit = new Audit({
     ignore: ["id"],
     options: [
         {
-            key: "idade",
-            title: "Idade"
-        },
-        {
-            key: "updatedAt",
-            customFormater: (updatedAt) => "fodase"
-        },
-        {
-            key: "profissao",
-            title: "Profissão do pião"
-        },
-        {
-            key: "jogos",
+            key: "permissoes",
             arrayOptions: {
                 key: "id",
                 name: "nome"
