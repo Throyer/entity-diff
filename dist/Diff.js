@@ -30,8 +30,8 @@ var DiffType;
 var Audit = /** @class */ (function () {
     function Audit(_a) {
         var _b = _a === void 0 ? { ignore: [], options: [] } : _a, ignore = _b.ignore, options = _b.options;
-        this.ignore = ignore;
-        this.options = options;
+        this.ignore = ignore !== null && ignore !== void 0 ? ignore : [];
+        this.options = options !== null && options !== void 0 ? options : [];
     }
     Audit.prototype.diff = function (from, to) {
         var _this = this;
