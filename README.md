@@ -6,7 +6,7 @@ generates a list of changes made to the entity.
 
 All you need are two objects, one with the entity before the changes and the other with it after the changes.
 
-[Try it out](https://stackblitz.com/edit/typescript-3heozh?file=index.ts)
+<a target="_blank" href="https://stackblitz.com/edit/typescript-3heozh?file=index.ts">Try it out</a>
 
 ## how to Install
 
