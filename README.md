@@ -2,6 +2,8 @@
 
 Entity diff generator.
 
+[Try it out](https://stackblitz.com/edit/typescript-3heozh?file=index.ts)
+
 How to use:
 ``` typescript
 
