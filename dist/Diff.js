@@ -22,15 +22,14 @@ exports.Audit = exports.DiffType = void 0;
 var utils_1 = require("./utils");
 var DiffType;
 (function (DiffType) {
-    DiffType["NEW"] = "NOVO";
-    DiffType["MODIFIED"] = "EDITADO";
-    DiffType["REMOVED"] = "REMOVIDO";
-    DiffType["ARRAY"] = "LISTA";
+    DiffType["NEW"] = "NEW";
+    DiffType["MODIFIED"] = "MODIFIED";
+    DiffType["REMOVED"] = "REMOVED";
+    DiffType["ARRAY"] = "ARRAY";
 })(DiffType = exports.DiffType || (exports.DiffType = {}));
 var Audit = /** @class */ (function () {
-    function Audit(ignore, options) {
-        if (ignore === void 0) { ignore = []; }
-        if (options === void 0) { options = []; }
+    function Audit(_a) {
+        var _b = _a === void 0 ? { ignore: [], options: [] } : _a, ignore = _b.ignore, options = _b.options;
         this.ignore = ignore;
         this.options = options;
     }
@@ -58,11 +57,11 @@ var Audit = /** @class */ (function () {
             from: from !== null && from !== void 0 ? from : null,
             to: to !== null && to !== void 0 ? to : null
         };
-        if ((options === null || options === void 0 ? void 0 : options.customFormater) && from) {
-            diff.from = options.customFormater(from);
+        if ((options === null || options === void 0 ? void 0 : options.customFormatter) && from) {
+            diff.from = options.customFormatter(from);
         }
-        if ((options === null || options === void 0 ? void 0 : options.customFormater) && to) {
-            diff.to = options.customFormater(to);
+        if ((options === null || options === void 0 ? void 0 : options.customFormatter) && to) {
+            diff.to = options.customFormatter(to);
         }
         diffs.push(diff);
         return diffs;
@@ -106,15 +105,15 @@ var Audit = /** @class */ (function () {
         var _this = this;
         var root = [];
         return right.reduce(function (modified, item) {
-            var _a, _b;
+            var _a, _b, _c;
             var options = _this.findKeyOptions(key);
             if (options === null || options === void 0 ? void 0 : options.arrayOptions) {
-                var leftItem = _this.findItemInAnotherArray(left, item, options.arrayOptions.key);
+                var leftItem = _this.findItemInAnotherArray(left, item, (_a = options.arrayOptions.key) !== null && _a !== void 0 ? _a : "id");
                 if (leftItem && item !== leftItem) {
                     var diffs = _this.diff(item, leftItem);
                     if (diffs && diffs.length) {
                         var diff = {
-                            key: (_b = item[(_a = options === null || options === void 0 ? void 0 : options.arrayOptions) === null || _a === void 0 ? void 0 : _a.name]) !== null && _b !== void 0 ? _b : key,
+                            key: (_c = item[(_b = options === null || options === void 0 ? void 0 : options.arrayOptions) === null || _b === void 0 ? void 0 : _b.name]) !== null && _c !== void 0 ? _c : key,
                             type: DiffType.MODIFIED,
                             details: diffs,
                         };
@@ -129,10 +128,10 @@ var Audit = /** @class */ (function () {
         var _this = this;
         var root = [];
         return right.reduce(function (modified, item) {
-            var _a, _b;
+            var _a, _b, _c;
             var options = _this.findKeyOptions(key);
             if (options === null || options === void 0 ? void 0 : options.arrayOptions) {
-                var notExists = _this.notExistInAnotherArray(left, item, options.arrayOptions.key);
+                var notExists = _this.notExistInAnotherArray(left, item, (_a = options.arrayOptions.key) !== null && _a !== void 0 ? _a : "id");
                 var diffs = [];
                 if (notExists && type === DiffType.NEW) {
                     diffs = _this.diff(utils_1.copySkeleton(item), item);
@@ -142,7 +141,7 @@ var Audit = /** @class */ (function () {
                 }
                 if (diffs.length) {
                     var diff = {
-                        key: (_b = item[(_a = options === null || options === void 0 ? void 0 : options.arrayOptions) === null || _a === void 0 ? void 0 : _a.name]) !== null && _b !== void 0 ? _b : key,
+                        key: (_c = item[(_b = options === null || options === void 0 ? void 0 : options.arrayOptions) === null || _b === void 0 ? void 0 : _b.name]) !== null && _c !== void 0 ? _c : key,
                         type: type,
                         details: diffs,
                     };

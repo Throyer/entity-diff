@@ -1,10 +1,10 @@
 import { copySkeleton, isArray, isObject } from "./utils";
 
 export enum DiffType {
-    NEW = "NOVO",
-    MODIFIED = "EDITADO",
-    REMOVED = "REMOVIDO",
-    ARRAY = "LISTA",
+    NEW = "NEW",
+    MODIFIED = "MODIFIED",
+    REMOVED = "REMOVED",
+    ARRAY = "ARRAY",
 }
 
 interface AuditProps {
@@ -15,9 +15,9 @@ interface AuditProps {
 export interface AuditKeyOptions {
     key: string;
     title?: string;
-    customFormater?: (object: any) => string;
+    customFormatter?: (object: any) => string;
     arrayOptions?: {
-        key: string;
+        key?: string;
         name?: string;
     }
 }
@@ -35,7 +35,7 @@ export class Audit {
     private ignore: string[];
     private options: AuditKeyOptions[];
 
-    constructor(ignore: string[] = [], options: AuditKeyOptions[] = []) {
+    constructor({ ignore, options }: AuditProps = { ignore: [], options: [] }) {
         this.ignore = ignore;
         this.options = options;
     }
@@ -76,12 +76,12 @@ export class Audit {
             to: to ?? null
         };
 
-        if (options?.customFormater && from) {
-            diff.from = options.customFormater(from);
+        if (options?.customFormatter && from) {
+            diff.from = options.customFormatter(from);
         }
 
-        if (options?.customFormater && to) {
-            diff.to = options.customFormater(to);
+        if (options?.customFormatter && to) {
+            diff.to = options.customFormatter(to);
         }
 
         diffs.push(diff);
@@ -149,7 +149,7 @@ export class Audit {
             const options = this.findKeyOptions(key);
 
             if (options?.arrayOptions) {
-                const leftItem = this.findItemInAnotherArray(left, item, options.arrayOptions.key);
+                const leftItem = this.findItemInAnotherArray(left, item, options.arrayOptions.key ?? "id");
                 if (leftItem && item !== leftItem) {
                     const diffs = this.diff(item, leftItem);
 
@@ -181,7 +181,7 @@ export class Audit {
 
             if (options?.arrayOptions) {
 
-                const notExists = this.notExistInAnotherArray(left, item, options.arrayOptions.key);
+                const notExists = this.notExistInAnotherArray(left, item, options.arrayOptions.key ?? "id");
 
                 let diffs: Diff[] = [];
 

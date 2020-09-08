@@ -1,8 +1,30 @@
 # Entity diff
 
-Entity diff generator.
+A simple entity diff generator.
 
-How to use:
+generates a list of changes made to the entity.
+
+All you need are two objects, one with the entity before the changes and the other with it after the changes.
+
+<a target="_blank" href="https://stackblitz.com/edit/typescript-3heozh?file=index.ts">Try it out</a>
+
+## how to Install
+
+npm:
+```shell
+npm install entity-diff
+```
+
+yarn:
+```shell
+yarn add entity-diff
+```
+
+
+*****
+
+
+## How to use:
 ``` typescript
 
 import { Audit } from "entity-diff";
@@ -10,14 +32,14 @@ import { Audit } from "entity-diff";
 const audit = new Audit();
 
 const before = {
-  name: "Lucas Oliveira",
+  name: "Mason",
   age: 20
-}
+};
 
 const after = {
-  name: "Lucas",
+  name: "Mason Floyd",
   age: 20
-}
+};
 
 const result = audit.diff(before, after);
 
@@ -25,142 +47,230 @@ const result = audit.diff(before, after);
 // [
 //   {
 //     key: "name",
-//     from: "Lucas Oliveira",
-//     to: "Lucas"
+//     from: "Mason",
+//     to: "Mason Floyd"
 //   }
 // ]
 
 ```
 
+*****
 
-Audit Options:
-``` typescript
+# Audit Options:
 
-import { Audit } from "entity-diff";
+It is possible to change some information in the final result of the diffs using parameters.
 
-const audit = new Audit(
-  ["id"],             // ignore: list with ignored properties (optional)
+### Ignoring properties
 
-  [                   // options: custom diff options for especific properties (optional)
-    {                 
-      key:            // key name (required)
-      title:          // name displayed in diff (optional)
-      customFormater: // function to customize the rendering of the `from` and `to` (optional)
+It is possible to ignore some keys of the objects audited through a list.
 
-      arrayOptions: { // arrayOptions: diff array options (optional)
-        key:          // used to search for the object in the other array (required)
-        name:         // property with the name displayed in the diff (optional)    
-      }
-    }
-  ]
-);
+```typescript
+  import { Audit } from "entity-diff";
 
-const before = {
-  id: 1,
-  nome: "Fulano da silva",
-  empresa: {
-      id: 1,
-      nome: "Algum lugar",
-      cnpj: "12345678910"
-  },
-  permissoes: [
-    {
-      id: 1,
-      nome: "ADMINISTRADOR"
-    },
-    {
-      id: 2,
-      nome: "USUARIO"
-    }
-  ]
-};
+  const before = {
+    name: "Mason",
+    age: 20
+  };
 
-const after = {
-  id: 1,
-  nome: "Fulano",
-  empresa: {
-    id: 2,
-    nome: "Outro lugar",
-    cnpj: "10987654321"
-  },
-  permissoes: [
-    {
-      id: 1,
-      nome: "SUPER_USER"
-    },
-    {
-      id: 4,
-      nome: "PROGRAMADOR"
-    }
-  ]
-};
+  const after = {
+    name: "Mason Floyd", // this change will be ignored
+    age: 25
+  };
 
-const diffs = audit.diff(before, after);
+  const ignore = ["name"]; 
+
+  const audit = new Audit({ ignore });
+
+  const result = audit.diff(before, after);
+
+  // result:
+  // [
+  //   {
+  //     key: "age",
+  //     from: 20,
+  //     to: 25
+  //   }
+  // ]
 ```
 
-**diffs**
+### Different name in the keys
 
-``` json
-[
-  {
-    "key": "nome",
-    "from": "Fulano da silva",
-    "to": "Fulano"
-  },
-  {
-    "key": "empresa",
-    "type": "EDITADO",
-    "details": [
+Changing the name that appears in the key in the result
+
+```typescript
+  import { Audit } from "entity-diff";
+
+  const before = {
+    name: "Mason",
+    age: 20
+  };
+
+  const after = {
+    name: "Mason Floyd",
+    age: 25
+  };
+
+  const options = [{ key: "name", title: "Person name" }]; 
+
+  const audit = new Audit({ options });
+
+  const result = audit.diff(before, after);
+
+  // result:
+  // [
+  //   {
+  //     key: "Person name", // title defined in options
+  //     from: "Mason",
+  //     to: "Mason Floyd"
+  //   }
+  // ]
+```
+
+
+### formatting the values displayed in "from" and "to"
+
+It can be done through a function defined in options
+
+```typescript
+  import { format } from 'date-fns'
+  import { Audit } from "entity-diff";
+
+  const before = {
+    name: "Mason",
+    age: 20
+  };
+
+  const after = {
+    name: "Mason Floyd",
+    age: 20,
+    updatedAt: "2020-09-08T18:04:56.627Z"
+  };
+
+  const options = [
+    {
+      key: "updatedAt",
+      customFormatter: date => format(new Date(date), "MM/dd/yyyy")
+    }
+  ]; 
+
+  const audit = new Audit({ options });
+
+  const result = audit.diff(before, after);
+
+  // result:
+  // [
+  //   {
+  //     key: "updatedAt",
+  //     from: null,
+  //     to: "09/08/2020"
+  //   }
+  // ]
+```
+
+## Working with `array` diffs
+
+when working with arrays, diffs are generated only when there is some value in `"arrayOptions"`.
+
+The `"key"` property represents the key used to find the entities within the other array. it is optional, but by default entity-diff looks for the `"id"` key.
+
+```typescript
+  import { Audit } from "entity-diff";
+
+  const before = {
+    name: "Mason",
+    age: 20,
+    roles: [
       {
-        "key": "nome",
-        "from": "Algum lugar",
-        "to": "Outro lugar"
+        id: 1,
+        name: "ADM"
       },
       {
-        "key": "cnpj",
-        "from": "12345678910",
-        "to": "10987654321"
+        id: 2,
+        name: "USER"
       }
     ]
-  },
-  {
-    "key": "permissoes",
-    "type": "LISTA",
-    "details": [
+  };
+
+  const after = {
+    name: "Mason",
+    age: 20,
+    roles: [
       {
-        "key": "ADMINISTRADOR",
-        "type": "EDITADO",
-        "details": [
-          {
-            "key": "nome",
-            "from": "ADMINISTRADOR",
-            "to": "SUPER_USER"
-          }
-        ]
+        id: 1,
+        name: "SUPER_USER"
       },
       {
-        "key": "PROGRAMADOR",
-        "type": "NOVO",
-        "details": [
-          {
-            "key": "nome",
-            "from": null,
-            "to": "PROGRAMADOR"
-          }
-        ]
-      },
-      {
-        "key": "USUARIO",
-        "type": "REMOVIDO",
-        "details": [
-          {
-            "key": "nome",
-            "from": "USUARIO",
-            "to": null
-          }
-        ]
-      },
+        id: 3,
+        name: "TEC"
+      }
     ]
-  }
-]
+  };
+
+  const options = [
+    {
+      key: "roles",
+      arrayOptions: {
+        name: "name"
+      }
+    }
+  ]; 
+
+  const audit = new Audit({ options });
+
+  const result = audit.diff(before, after);
+
+  // resut:
+  // [
+  //     {
+  //         "key": "roles",
+  //         "type": "ARRAY",
+  //         "details": [
+  //             {
+  //                 "key": "ADM",
+  //                 "type": "MODIFIED",
+  //                 "details": [
+  //                     {
+  //                         "key": "name",
+  //                         "from": "ADM",
+  //                         "to": "SUPER_USER"
+  //                     }
+  //                 ]
+  //             },
+  //             {
+  //                 "key": "TEC",
+  //                 "type": "NEW",
+  //                 "details": [
+  //                     {
+  //                         "key": "id",
+  //                         "from": null,
+  //                         "to": 3
+  //                     },
+  //                     {
+  //                         "key": "name",
+  //                         "from": null,
+  //                         "to": "TEC"
+  //                     }
+  //                 ]
+  //             },
+  //             {
+  //                 "key": "USER",
+  //                 "type": "REMOVED",
+  //                 "details": [
+  //                     {
+  //                         "key": "id",
+  //                         "from": 2,
+  //                         "to": null
+  //                     },
+  //                     {
+  //                         "key": "name",
+  //                         "from": "USER",
+  //                         "to": null
+  //                     }
+  //                 ]
+  //             }
+  //         ]
+  //     }
+  // ]
 ```
+
+
