@@ -2,10 +2,60 @@
 
 Entity diff generator.
 
-de:
+How to use:
+``` typescript
 
-``` javascript
-{
+import { Audit } from "entity-diff";
+
+const audit = new Audit();
+
+const before = {
+  name: "Lucas Oliveira",
+  age: 20
+}
+
+const after = {
+  name: "Lucas",
+  age: 20
+}
+
+const result = audit.diff(before, after);
+
+// result:
+// [
+//   {
+//     key: "name",
+//     from: "Lucas Oliveira",
+//     to: "Lucas"
+//   }
+// ]
+
+```
+
+
+Audit Options:
+``` typescript
+
+import { Audit } from "entity-diff";
+
+const audit = new Audit(
+  ["id"],             // ignore: list with ignored properties (optional)
+
+  [                   // options: custom diff options for especific properties (optional)
+    {                 
+      key:            // key name (required)
+      title:          // name displayed in diff (optional)
+      customFormater: // function to customize the rendering of the `from` and `to` (optional)
+
+      arrayOptions: { // arrayOptions: diff array options (optional)
+        key:          // used to search for the object in the other array (required)
+        name:         // property with the name displayed in the diff (optional)    
+      }
+    }
+  ]
+);
+
+const before = {
   id: 1,
   nome: "Fulano da silva",
   empresa: {
@@ -23,13 +73,9 @@ de:
       nome: "USUARIO"
     }
   ]
-}
-```
+};
 
-para:
-
-``` javascript
-{
+const after = {
   id: 1,
   nome: "Fulano",
   empresa: {
@@ -47,68 +93,70 @@ para:
       nome: "PROGRAMADOR"
     }
   ]
-}
+};
+
+const diffs = audit.diff(before, after);
 ```
 
-**diff**
+**diffs**
 
-``` javascript
+``` json
 [
   {
-    key: "nome",
-    from: "Fulano da silva",
-    to: "Fulano"
+    "key": "nome",
+    "from": "Fulano da silva",
+    "to": "Fulano"
   },
   {
-    key: "empresa",
-    type: "EDITADO",
-    details: [
+    "key": "empresa",
+    "type": "EDITADO",
+    "details": [
       {
-        key: "nome",
-        from: "Algum lugar",
-        to: "Outro lugar"
+        "key": "nome",
+        "from": "Algum lugar",
+        "to": "Outro lugar"
       },
       {
-        key: "cnpj",
-        from: "12345678910",
-        to: "10987654321"
+        "key": "cnpj",
+        "from": "12345678910",
+        "to": "10987654321"
       }
     ]
   },
   {
-    key: "permissoes",
-    type: "LISTA",
-    details: [
+    "key": "permissoes",
+    "type": "LISTA",
+    "details": [
       {
-        key: "ADMINISTRADOR",
-        type: "EDITADO",
-        details: [
+        "key": "ADMINISTRADOR",
+        "type": "EDITADO",
+        "details": [
           {
-            key: "nome",
-            from: "ADMINISTRADOR",
-            to: "SUPER_USER"
+            "key": "nome",
+            "from": "ADMINISTRADOR",
+            "to": "SUPER_USER"
           }
         ]
       },
       {
-        key: "PROGRAMADOR",
-        type: "NOVO",
-        details: [
+        "key": "PROGRAMADOR",
+        "type": "NOVO",
+        "details": [
           {
-            key: "nome",
-            from: null,
-            to: "PROGRAMADOR"
+            "key": "nome",
+            "from": null,
+            "to": "PROGRAMADOR"
           }
         ]
       },
       {
-        key: "USUARIO",
-        type: "REMOVIDO",
-        details: [
+        "key": "USUARIO",
+        "type": "REMOVIDO",
+        "details": [
           {
-            key: "nome",
-            from: "USUARIO",
-            to: null
+            "key": "nome",
+            "from": "USUARIO",
+            "to": null
           }
         ]
       },

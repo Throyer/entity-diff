@@ -35,9 +35,9 @@ export class Audit {
     private ignore: string[];
     private options: AuditKeyOptions[];
 
-    constructor({ ignore, options }: AuditProps) {
-        this.ignore = ignore ?? [];
-        this.options = options ?? [];
+    constructor(ignore: string[] = [], options: AuditKeyOptions[] = []) {
+        this.ignore = ignore;
+        this.options = options;
     }
 
     public diff(from: any, to: any): Diff[] {
@@ -53,17 +53,17 @@ export class Audit {
                 key), root);
     }
 
-    private deepDiffs(diffs: Diff[], de: any, para: any, key: string) {
+    private deepDiffs(diffs: Diff[], from: any, to: any, key: string) {
 
-        if (isArray(de, para)) {
-            return this.addArrayDiff(diffs, de, para, key);
+        if (isArray(from, to)) {
+            return this.addArrayDiff(diffs, from, to, key);
         }
 
-        if (isObject(de, para)) {
-            return this.addObjectDiff(diffs, de, para, key)
+        if (isObject(from, to)) {
+            return this.addObjectDiff(diffs, from, to, key)
         }
 
-        return this.addSimpleAudit(diffs, de, para, key);
+        return this.addSimpleAudit(diffs, from, to, key);
     }
 
     private addSimpleAudit(diffs: Diff[], from: any, to: any, key: string): Diff[] {

@@ -28,10 +28,11 @@ var DiffType;
     DiffType["ARRAY"] = "LISTA";
 })(DiffType = exports.DiffType || (exports.DiffType = {}));
 var Audit = /** @class */ (function () {
-    function Audit(_a) {
-        var ignore = _a.ignore, options = _a.options;
-        this.ignore = ignore !== null && ignore !== void 0 ? ignore : [];
-        this.options = options !== null && options !== void 0 ? options : [];
+    function Audit(ignore, options) {
+        if (ignore === void 0) { ignore = []; }
+        if (options === void 0) { options = []; }
+        this.ignore = ignore;
+        this.options = options;
     }
     Audit.prototype.diff = function (from, to) {
         var _this = this;
@@ -40,14 +41,14 @@ var Audit = /** @class */ (function () {
             .filter(function (key) { return _this.hasDiff(from, to, key); })
             .reduce(function (diffs, key) { return _this.deepDiffs(diffs, from[key], to[key], key); }, root);
     };
-    Audit.prototype.deepDiffs = function (diffs, de, para, key) {
-        if (utils_1.isArray(de, para)) {
-            return this.addArrayDiff(diffs, de, para, key);
+    Audit.prototype.deepDiffs = function (diffs, from, to, key) {
+        if (utils_1.isArray(from, to)) {
+            return this.addArrayDiff(diffs, from, to, key);
         }
-        if (utils_1.isObject(de, para)) {
-            return this.addObjectDiff(diffs, de, para, key);
+        if (utils_1.isObject(from, to)) {
+            return this.addObjectDiff(diffs, from, to, key);
         }
-        return this.addSimpleAudit(diffs, de, para, key);
+        return this.addSimpleAudit(diffs, from, to, key);
     };
     Audit.prototype.addSimpleAudit = function (diffs, from, to, key) {
         var _a;
