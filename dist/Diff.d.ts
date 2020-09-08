@@ -1,15 +1,19 @@
 export declare enum DiffType {
-    NEW = "NOVO",
-    MODIFIED = "EDITADO",
-    REMOVED = "REMOVIDO",
-    ARRAY = "LISTA"
+    NEW = "NEW",
+    MODIFIED = "MODIFIED",
+    REMOVED = "REMOVED",
+    ARRAY = "ARRAY"
+}
+interface AuditProps {
+    ignore?: string[];
+    options?: AuditKeyOptions[];
 }
 export interface AuditKeyOptions {
     key: string;
     title?: string;
-    customFormater?: (object: any) => string;
+    customFormatter?: (object: any) => string;
     arrayOptions?: {
-        key: string;
+        key?: string;
         name?: string;
     };
 }
@@ -23,7 +27,7 @@ export interface Diff {
 export declare class Audit {
     private ignore;
     private options;
-    constructor(ignore?: string[], options?: AuditKeyOptions[]);
+    constructor({ ignore, options }?: AuditProps);
     diff(from: any, to: any): Diff[];
     private deepDiffs;
     private addSimpleAudit;
@@ -38,3 +42,4 @@ export declare class Audit {
     private hasDiff;
     private diffTypeDiscover;
 }
+export {};

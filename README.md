@@ -54,6 +54,8 @@ const result = audit.diff(before, after);
 
 ```
 
+*****
+
 # Audit Options:
 
 It is possible to change some information in the final result of the diffs using parameters.
@@ -162,6 +164,112 @@ It can be done through a function defined in options
   //     from: null,
   //     to: "09/08/2020"
   //   }
+  // ]
+```
+
+## Working with list diffs
+
+when working with arrays, diffs are generated only when there is some value in `"arrayOptions"`.
+
+The `"key"` property represents the key used to find the entities within the other array. it is optional, but by default entity-diff looks for the `"id"` key.
+
+```typescript
+  import { Audit } from "entity-diff";
+
+  const before = {
+    name: "Mason",
+    age: 20,
+    roles: [
+      {
+        id: 1,
+        name: "ADM"
+      },
+      {
+        id: 2,
+        name: "USER"
+      }
+    ]
+  };
+
+  const after = {
+    name: "Mason",
+    age: 20,
+    roles: [
+      {
+        id: 1,
+        name: "SUPER_USER"
+      },
+      {
+        id: 3,
+        name: "TEC"
+      }
+    ]
+  };
+
+  const options = [
+    {
+      key: "roles",
+      arrayOptions: {
+        name: "name"
+      }
+    }
+  ]; 
+
+  const audit = new Audit({ options });
+
+  const result = audit.diff(before, after);
+
+  // resut:
+  // [
+  //     {
+  //         "key": "roles",
+  //         "type": "ARRAY",
+  //         "details": [
+  //             {
+  //                 "key": "ADM",
+  //                 "type": "MODIFIED",
+  //                 "details": [
+  //                     {
+  //                         "key": "name",
+  //                         "from": "ADM",
+  //                         "to": "SUPER_USER"
+  //                     }
+  //                 ]
+  //             },
+  //             {
+  //                 "key": "TEC",
+  //                 "type": "NEW",
+  //                 "details": [
+  //                     {
+  //                         "key": "id",
+  //                         "from": null,
+  //                         "to": 3
+  //                     },
+  //                     {
+  //                         "key": "name",
+  //                         "from": null,
+  //                         "to": "TEC"
+  //                     }
+  //                 ]
+  //             },
+  //             {
+  //                 "key": "USER",
+  //                 "type": "REMOVED",
+  //                 "details": [
+  //                     {
+  //                         "key": "id",
+  //                         "from": 2,
+  //                         "to": null
+  //                     },
+  //                     {
+  //                         "key": "name",
+  //                         "from": "USER",
+  //                         "to": null
+  //                     }
+  //                 ]
+  //             }
+  //         ]
+  //     }
   // ]
 ```
 
