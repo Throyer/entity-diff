@@ -36,8 +36,8 @@ export class Audit {
     private options: AuditKeyOptions[];
 
     constructor({ ignore, options }: AuditProps = { ignore: [], options: [] }) {
-        this.ignore = ignore;
-        this.options = options;
+        this.ignore = ignore ?? [];
+        this.options = options ?? [];
     }
 
     public diff(from: any, to: any): Diff[] {
