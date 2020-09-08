@@ -12,7 +12,7 @@ describe("testar auditoria", () => {
             }
         ];
 
-        const audit = new Audit(["id"]);
+        const audit = new Audit();
 
         const from = {
             id: 1,
@@ -94,9 +94,9 @@ describe("testar auditoria", () => {
             }
         ];
 
-        const audit = new Audit(
-            ["id"],
-            [
+        const audit = new Audit({
+            ignore: ["id"],
+            options: [
                 {
                     key: "permissoes",
                     arrayOptions: {
@@ -105,7 +105,7 @@ describe("testar auditoria", () => {
                     }
                 }
             ]
-        );
+        });
 
         const from = {
             id: 1,
