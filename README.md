@@ -167,7 +167,7 @@ It can be done through a function defined in options
   // ]
 ```
 
-## Working with list diffs
+## Working with `array` diffs
 
 when working with arrays, diffs are generated only when there is some value in `"arrayOptions"`.
 
