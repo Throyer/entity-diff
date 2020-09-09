@@ -1,6 +1,6 @@
 {
   "name": "entity-diff",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "author": "Renato Henrique",
   "main": "dist/Diff.js",
   "types": "dist/Diff.d.ts",
@@ -20,9 +20,7 @@
   "devDependencies": {
     "@types/jest": "^26.0.13",
     "ts-jest": "^26.3.0",
+    "jest": "^26.4.2",
     "typescript": "^3.9.7"
-  },
-  "dependencies": {
-    "jest": "^26.4.2"
   }
 }
