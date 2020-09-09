@@ -1,4 +1,4 @@
-import { Diff, Audit, DiffType } from "../Diff";
+import { Diff, Audit, DiffType, AuditKeyOptions } from "../Diff";
 
 describe("testar auditoria", () => {
 
@@ -151,4 +151,115 @@ describe("testar auditoria", () => {
 
         expect(diffs).toEqual(expectedDiffs);
     });
+
+    it("não devem aparecer mudanças feitas em chaves ignoradas", () => {
+
+        const expectedResult = [];
+
+        const ignore = ["id", "nome", "idade"];
+
+        const audit = new Audit({ ignore });
+
+        const de = {
+            id: 1,
+            nome: "renato",
+            idade: 25
+        };
+
+        const para = {
+            id: 2,
+            nome: null,
+            idade: 20
+        };
+
+        const result = audit.diff(de, para);
+
+        expect(result).toEqual(expectedResult);
+    })
+
+    it("deve aparecer com um nome diferente na diff", () => {
+
+        const expectedResult: Diff[] = [
+            {
+                key: "Nome de usuario",
+                from: "renato",
+                to: "renatinho"
+            }
+        ];
+
+        const options: AuditKeyOptions[] = [{ key: "nome", title: "Nome de usuario" }];
+
+        const audit = new Audit({ options });
+
+        const de = {
+            id: 1,
+            nome: "renato",
+            idade: 25
+        };
+
+        const para = {
+            id: 1,
+            nome: "renatinho",
+            idade: 25
+        };
+
+        const result = audit.diff(de, para);
+
+        expect(result).toEqual(expectedResult);
+    })
+
+    it("deve detectar romeção de objeto no array", () => {
+
+        const expectedResult: Diff[] = [
+            {
+                key: "roles",
+                type: DiffType.ARRAY,
+                details: [
+                    {
+                        type: DiffType.REMOVED,
+                        key: "ADMIN",
+                        details: [
+                            {
+                                key: "nome",
+                                from: "ADMIN",
+                                to: null
+                            }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        const options: AuditKeyOptions[] = [
+            { 
+                key: "roles",
+                arrayOptions: {
+                    name: "nome"
+                }
+            }
+        ];
+
+        const audit = new Audit({ ignore: ["id"], options });
+
+        const de = {
+            id: 1,
+            nome: "renato",
+            roles: [
+                {
+                    id: 1,
+                    nome: "ADMIN"
+                }
+            ]
+        };
+
+        const para = {
+            id: 1,
+            nome: "renato",
+            roles: []
+        };
+
+        const result = audit.diff(de, para);
+
+        expect(result).toEqual(expectedResult);
+    })
 })
