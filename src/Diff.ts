@@ -16,6 +16,7 @@ export interface AuditKeyOptions {
     key: string;
     title?: string;
     customFormatter?: (object: any) => string;
+    customComparator?: (from: any, to: any) => boolean;
     arrayOptions?: {
         key?: string;
         name?: string;
@@ -222,6 +223,12 @@ export class Audit {
     }
 
     private hasDiff(from: any, to: any, key: string) {
+        const options = this.findKeyOptions(key);
+
+        if (options && options.customComparator) {
+            return options.customComparator(from[key], to[key]) && !this.ignore.includes(key);
+        }
+
         return (from[key] !== to[key]) && !this.ignore.includes(key);
     }
 

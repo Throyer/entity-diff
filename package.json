@@ -1,7 +1,7 @@
 {
   "name": "entity-diff",
-  "version": "1.0.8",
-  "author": "Renato Henrique",
+  "version": "1.0.7",
+  "author": "https://github.com/Throyer",
   "main": "dist/Diff.js",
   "types": "dist/Diff.d.ts",
   "license": "MIT",
@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@types/jest": "^26.0.13",
+    "jest": "^26.4.2",
     "ts-jest": "^26.3.0",
     "typescript": "^3.9.7"
   },
