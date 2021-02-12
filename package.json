@@ -1,11 +1,15 @@
 {
   "name": "entity-diff",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "author": "Renato Henrique",
   "main": "dist/Diff.js",
   "types": "dist/Diff.d.ts",
   "license": "MIT",
-  "keywords": ["diff", "entity-diff", "object-diff"],
+  "keywords": [
+    "diff",
+    "entity-diff",
+    "object-diff"
+  ],
   "scripts": {
     "build": "tsc",
     "test": "jest --config jestconfig.json"
